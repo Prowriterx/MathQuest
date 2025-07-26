@@ -1,0 +1,155 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathQuest: Rewards</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(180deg, #1a0933, #3c1b66);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 800px;
+      padding: 20px;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-transform: uppercase;
+      color: #ffeb3b;
+      text-shadow: 0 0 10px #ffeb3b, 0 0 20px #f06292;
+      animation: neon-glow 1.5s ease-in-out infinite alternate;
+    }
+
+    .reward-message {
+      font-size: 1.5em;
+      color: #e1bee7;
+      margin: 20px 0;
+    }
+
+    .stats {
+      font-size: 1.2em;
+      color: #ffeb3b;
+      margin: 20px 0;
+    }
+
+    .back-button {
+      background: #ff4081;
+      color: #fff;
+      padding: 15px 30px;
+      font-size: 1.5em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff4081;
+      transition: transform 0.3s;
+    }
+
+    .back-button:hover {
+      transform: scale(1.1);
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('images/stardust.png');
+      opacity: 0.5;
+      animation: twinkle 10s infinite;
+    }
+
+    .nav-bar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
+
+    .nav-button {
+      background: #00bcd4;
+      color: #fff;
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .nav-button:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    @keyframes neon-glow {
+      from { text-shadow: 0 0 10px #ffeb3b, 0 0 20px #f06292; }
+      to { text-shadow: 0 0 20px #ffeb3b, 0 0 30px #f06292, 0 0 40px #ff4081; }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="nav-bar">
+    <button class="nav-button" onclick="window.location.href='index.html'">Home</button>
+    <button class="nav-button" onclick="window.location.href='mission_hub.html'">Mission Hub</button>
+    <button class="nav-button" disabled>Rewards</button>
+  </div>
+  <div class="container">
+    <h1>Reward Station</h1>
+    <div class="reward-message">Great work, Cadet Calculator! Check your cosmic achievements!</div>
+    <div class="stats" id="stats">Cadet Rank: Rookie | Star Points: 0 | Galaxies Conquered: 0/4</div>
+    <button class="back-button" onclick="window.location.href='mission_hub.html'">Back to Mission Hub</button>
+  </div>
+
+  <audio id="victorySound" src="sounds/victory.mp3" preload="auto"></audio>
+
+  <script>
+    window.onload = function() {
+      const victorySound = document.getElementById('victorySound');
+      victorySound.volume = 0.5;
+      victorySound.play().catch(error => console.log('Victory sound failed:', error));
+
+      const progress = JSON.parse(localStorage.getItem('mathQuestProgress')) || {
+        starPoints: 0,
+        completedGalaxies: [],
+        unlockedLevel: 1,
+        grade: 7
+      };
+      const completedCount = progress.completedGalaxies.length;
+      document.getElementById('stats').textContent = `Cadet Rank: ${getRank(completedCount)} | Star Points: ${progress.starPoints} | Galaxies Conquered: ${completedCount}/4`;
+    };
+
+    function getRank(completedCount) {
+      if (completedCount === 4) return 'Master Calculator';
+      if (completedCount >= 2) return 'Star Cadet';
+      return 'Rookie';
+    }
+  </script>
+</body>
+</html>
+```

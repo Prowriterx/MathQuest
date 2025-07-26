@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathQuest: Arcade Adventures</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .galaxy {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: radial-gradient(circle, #3a0a6a 10%, #000 70%);
+      animation: vortex 15s infinite linear;
+    }
+
+    @keyframes vortex {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+
+    .meteor {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ff4081;
+      animation: explode 1.5s linear infinite;
+    }
+
+    @keyframes explode {
+      0% { transform: translate(-50vw, -50vh); opacity: 1; }
+      100% { transform: translate(50vw, 50vh); opacity: 0; }
+    }
+
+    .meteor:nth-child(1) { left: 20%; animation-delay: 0s; }
+    .meteor:nth-child(2) { left: 40%; animation-delay: 0.4s; }
+    .meteor:nth-child(3) { left: 60%; animation-delay: 0.8s; }
+    .meteor:nth-child(4) { left: 80%; animation-delay: 1.2s; }
+
+    .custom-planet {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: url('images/my-planet.png') no-repeat;
+      background-size: cover;
+      top: 10%;
+      right: 5%;
+      animation: rotate 25s linear infinite;
+      z-index: 1;
+    }
+
+    .custom-alien {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: url('images/my-alien.png') no-repeat;
+      background-size: cover;
+      bottom: 20%;
+      right: 10%;
+      animation: wobble 2s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(10deg); }
+      75% { transform: rotate(-10deg); }
+    }
+
+    .grid-floor {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 200px;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 10px,
+        #00bcd4 10px,
+        #00bcd4 12px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 10px,
+        #00bcd4 10px,
+        #00bcd4 12px
+      );
+      transform: perspective(500px) rotateX(60deg);
+      opacity: 0.5;
+      z-index: 1;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 900px;
+      padding: 20px;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 6em;
+      text-transform: uppercase;
+      color: #ffeb3b;
+      text-shadow: 0 0 20px #ff4081, 0 0 40px #00bcd4;
+      animation: glitch 2s infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+    }
+
+    .subtitle {
+      font-size: 1.8em;
+      color: #00bcd4;
+      text-shadow: 0 0 10px #00bcd4;
+      margin-bottom: 20px;
+    }
+
+    .calcbot {
+      position: absolute;
+      left: 2%;
+      top: 10%;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(#00bcd4, #00838f);
+      border-radius: 50%;
+      animation: hover 2.5s ease-in-out infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px #00bcd4;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .calcbot::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: #ff4081;
+      border-radius: 50%;
+      top: 10px;
+      left: 10px;
+      animation: gear 3s linear infinite;
+    }
+
+    .calcbot::after {
+      content: attr(data-text);
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 1em;
+      color: #ffeb3b;
+      text-shadow: 0 0 5px #ffeb3b;
+      width: 150px;
+      text-align: center;
+      animation: bubble 3s infinite;
+    }
+
+    /* New Second CalcBot */
+    .calcbot2 {
+      position: absolute;
+      right: 2%;
+      bottom: 10%;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(#4a90e2, #2f80ed);
+      border-radius: 50%;
+      animation: hover 2.7s ease-in-out infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px #4a90e2;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .calcbot2::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      top: 10px;
+      left: 10px;
+      animation: gear 3.5s linear infinite;
+    }
+
+    .calcbot2::after {
+      content: attr(data-text);
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 1em;
+      color: #ffeb3b;
+      text-shadow: 0 0 5px #ffeb3b;
+      width: 150px;
+      text-align: center;
+      animation: bubble 3s infinite;
+    }
+
+    @keyframes hover {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    @keyframes gear {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes bubble {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    .spaceship {
+      width: 250px;
+      animation: warp 1.5s infinite;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .spaceship::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 30px;
+      background: linear-gradient(180deg, #ff4081, transparent);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      animation: trail 0.5s infinite;
+    }
+
+    @keyframes warp {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    @keyframes trail {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .grade-selection {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .grade-button, .start-button, .nav-button {
+      background: linear-gradient(45deg, #ff4081, #ffeb3b);
+      color: #000;
+      padding: 12px 30px;
+      font-size: 1.3em;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #ff4081;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .grade-button::after, .start-button::after, .nav-button::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, #fff, transparent 70%);
+      opacity: 0;
+      top: 0;
+      left: 0;
+      transition: opacity 0.3s;
+    }
+
+    .grade-button:hover::after, .start-button:hover::after, .nav-button:hover:not(:disabled)::after {
+      opacity: 0.3;
+    }
+
+    .grade-button:hover, .start-button:hover, .nav-button:hover:not(:disabled) {
+      transform: scale(1.15);
+    }
+
+    .grade-button.selected, .nav-button:disabled {
+      background: #ffeb3b;
+      box-shadow: 0 0 20px #ffeb3b;
+      cursor: default;
+    }
+
+    .grade-button:disabled {
+      background: #444;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .start-button {
+      font-size: 1.8em;
+      padding: 15px 50px;
+    }
+
+    .nav-bar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+  <div class="galaxy">
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="meteor"></div>
+    <div class="custom-planet"></div>
+    <div class="custom-alien"></div>
+    <div class="grid-floor"></div>
+  </div>
+  <div class="container">
+    <h1>MathQuest</h1>
+    <p class="subtitle">Join CalcBot’s Cosmic Math Mission!</p>
+    <div class="calcbot" data-text="I’m CalcBot, Your Math Guide!" onclick="changeCalcBotText(this); playClickSound()"></div>
+    <div class="calcbot2" data-text="I’m CalcBot, Your Math Guide!" onclick="changeCalcBotText(this); playClickSound()"></div>
+    <img src="images/my-spaceship.png" alt="Spaceship" class="spaceship">
+    <div class="grade-selection">
+      <button class="grade-button selected" id="grade7" onclick="selectGrade(7); playClickSound()">Grade 7</button>
+      <button class="grade-button" id="grade8" disabled>Grade 8</button>
+      <button class="grade-button" id="grade9" disabled>Grade 9</button>
+    </div>
+    <button class="start-button" onclick="startMission(); playClickSound()">Start Mission</button>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-button" disabled>Home</button>
+    <button class="nav-button" onclick="window.location.href='mission_hub.html'; playClickSound()" onmouseover="playHoverSound()">Mission Hub</button>
+    <button class="nav-button" onclick="window.location.href='reward_screen.html'; playClickSound()" onmouseover="playHoverSound()">Rewards</button>
+  </div>
+  <audio id="introSound" src="sounds/intro.mp3" preload="auto"></audio>
+  <audio id="clickSound" src="sounds/beep.mp3" preload="auto"></audio>
+  <audio id="hoverSound" src="sounds/blip.mp3" preload="auto"></audio>
+  <script>
+    let selectedGrade = 7;
+    const calcBotPhrases = [
+      "I’m CalcBot, Your Math Guide!",
+      "Ready to Blast Off?",
+      "Let’s Solve Cosmic Puzzles!",
+      "Math is an Adventure!"
+    ];
+    let phraseIndex = 0;
+
+    window.onload = function() {
+      const introSound = document.getElementById('introSound');
+      introSound.volume = 0.5;
+      introSound.play().catch(error => console.log('Intro sound failed:', error));
+
+      const progress = JSON.parse(localStorage.getItem('mathQuestProgress')) || {
+        starPoints: 0,
+        completedGalaxies: [],
+        unlockedLevel: 1,
+        grade: 7
+      };
+      selectedGrade = progress.grade;
+      updateGradeSelection();
+    };
+
+    function playClickSound() {
+      const clickSound = document.getElementById('clickSound');
+      clickSound.currentTime = 0;
+      clickSound.volume = 0.5;
+      clickSound.play().catch(error => console.log('Click sound failed:', error));
+    }
+
+    function playHoverSound() {
+      const hoverSound = document.getElementById('hoverSound');
+      hoverSound.currentTime = 0;
+      hoverSound.volume = 0.3;
+      hoverSound.play().catch(error => console.log('Hover sound failed:', error));
+    }
+
+    function changeCalcBotText(element) {
+      phraseIndex = (phraseIndex + 1) % calcBotPhrases.length;
+      document.querySelector('.calcbot').setAttribute('data-text', calcBotPhrases[phraseIndex]);
+      document.querySelector('.calcbot2').setAttribute('data-text', calcBotPhrases[phraseIndex]);
+    }
+
+    function selectGrade(grade) {
+      if (grade === 7) {
+        selectedGrade = grade;
+        updateGradeSelection();
+        const progress = JSON.parse(localStorage.getItem('mathQuestProgress')) || {
+          starPoints: 0,
+          completedGalaxies: [],
+          unlockedLevel: 1,
+          grade: 7
+        };
+        progress.grade = selectedGrade;
+        localStorage.setItem('mathQuestProgress', JSON.stringify(progress));
+      }
+    }
+
+    function updateGradeSelection() {
+      document.getElementById('grade7').classList.add('selected');
+      document.getElementById('grade8').classList.remove('selected');
+      document.getElementById('grade9').classList.remove('selected');
+    }
+
+    function startMission() {
+      window.location.href = `mission_hub.html?grade=${selectedGrade}`;
+    }
+  </script>
+</body>
+</html>
